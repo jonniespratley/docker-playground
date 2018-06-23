@@ -1,0 +1,41 @@
+version: '3'
+services:
+
+  # NodeJS app
+  web:
+    build: .
+    volumes:
+      - ./app:/app
+    ports:
+      - "8081:3000"
+    links:
+      - redis:redis
+    networks:
+      - webnet
+    environment: 
+      - REDIS_HOST=redis
+  
+  # nging proxy
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - /www/public
+    links:
+      - web:web
+
+  # Redis store
+  redis:
+    hostname: redis
+    image: redis
+    ports:
+      - "6379"
+    networks:
+      - webnet
+
+  # Database
+
+networks:
+  webnet:
