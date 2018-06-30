@@ -1,13 +1,40 @@
 version: '3'
 services:
+  
+  #### Nginx proxy
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - 8081:80
+    volumes:
+      - /www/public
+    links:
+      - web:web
+  
+  #### Nginx cache
+  proxy:
+    restart: always
+    image: bitnami/nginx:latest 
+    ports:
+      - 8083:8080
+      - 8443:8443
+    volumes:
+      - ./public:/app
+    links:
+      - web:web
 
-  # NodeJS app
+  #### NodeJS app
   web:
     build: ./app
+    #image: jsapps/nodejs-app:latest
+    command: node bin/www
     volumes:
       - "./app:/src/app"
     ports:
-      - "3030:3000"
+      - 3000
+    depends_on: 
+      - db
     links:
       - db:redis
     networks:
@@ -15,29 +42,19 @@ services:
     environment: 
       - REDIS_HOST=redis
       - DEBUG=*
-    command: npm start
   
-  # nging proxy
-  nginx:
-    restart: always
-    build: ./nginx
-    ports:
-      - "8080:80"
-    volumes:
-      - /www/public
-    links:
-      - web:web
-
-  # Redis store
+    
+  #### Redis store
   db:
     hostname: redis
     image: redis
     ports:
-      - "6379"
+      - 6379
     networks:
       - webnet
 
   # Database
+
 
 networks:
   webnet:
