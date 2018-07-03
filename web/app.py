@@ -3,7 +3,6 @@ import os
 import socket
 import redis
 import json
-
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -12,18 +11,12 @@ redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
 redis_host = os.getenv('REDIS_HOST', 'localhost')
 db = redis.StrictRedis(host=redis_host, port=6379, db=0)
 #r.set('foo', 'bar');
-
 #app.logger.debug('from redis', r.get('foo'));
-
 # Connect to Redis
 #cache = redis.Redis(host="redis", db=0, socket_connect_timeout=2, socket_timeout=2)
-
-
 #db = redis.Redis('localhost') #connect to server
-
 #app.logger.info('redis_host', redis_host)
 #app.logger.info('redis_url', redis_url)
-
 
 def get_hit_count():
     retries = 5
@@ -48,7 +41,11 @@ def index():
     html = "<h3>Hello {name}!</h3>" \
            "<b>Hostname:</b> {hostname}<br/>" \
            "<b>Visits:</b> {visits}"
-    return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname(), visits=visits)
+
+    #return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname(), visits=visits)
+    return render_template('index.html', hostname=socket.gethostname(), visits=visits)
+
+
 
 @app.route('/home', defaults={'path': ''}, methods = ['PUT', 'GET'])
 def home(path):
@@ -68,11 +65,6 @@ def cache():
     count = get_hit_count()
     return 'Hello World! I have been seen {} times.\n'.format(count)
 
-
-
-@app.route('/hello2')
-def hello2():
-    return 'Hello, World'
 
 @app.route('/hello/')
 @app.route('/hello/<name>')
@@ -101,10 +93,6 @@ def show_post(post_id):
 def show_subpath(subpath):
     # show the subpath after /path/
     return 'Subpath %s' % subpath
-
-
-
-
 
 
 
