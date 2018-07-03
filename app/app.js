@@ -14,25 +14,6 @@ const config = require('./config')();
 
 var app = express();
 
-app.use(session({
-    secret: 'sessionSecret',
-    resave: false,
-    saveUninitialized: true,
-    store: new RedisStore({
-        client: config.redisClient,
-        prefix: 'session:',
-        logErrors: true
-    }),
-    cookie: {
-        //secure: true
-    }
-}))
-
-app.locals.redis = config.redisClient;
-
-console.log(process.env);
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hjs');
@@ -46,6 +27,22 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.locals.redis = config.redisClient;
+
+app.use(session({
+    secret: 'sessionSecret',
+    resave: false,
+    saveUninitialized: true,
+    store: new RedisStore({
+        client: config.redisClient,
+        prefix: 'session:',
+        logErrors: true
+    }),
+    cookie: {
+        //secure: true
+    }
+}))
 
 app.use('/', routes);
 app.use('/users', users);

@@ -43,7 +43,7 @@ def index():
            "<b>Visits:</b> {visits}"
 
     #return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname(), visits=visits)
-    return render_template('index.html', hostname=socket.gethostname(), visits=visits)
+    return render_template('index.html', hostname=socket.gethostname(), visits=visits, redis_host=redis_host, redis_url=redis_url)
 
 
 
