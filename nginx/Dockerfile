@@ -6,10 +6,12 @@ FROM nginx
 #RUN rm /etc/nginx/sites-enabled/default
 RUN ls -la /etc/nginx
 
-COPY static-html-directory /usr/share/nginx/html
+#COPY static-html-directory /usr/share/nginx/html
 
+EXPOSE 80
 
-#COPY nginx.conf /etc/nginx/nginx.conf
 COPY . /etc/nginx
-CMD [ "nginx-debug", "-g", "daemon off;"]]
+#COPY nginx.conf /etc/nginx/nginx.conf
+
+CMD [ "nginx-debug", "-g", "daemon off;"]
 

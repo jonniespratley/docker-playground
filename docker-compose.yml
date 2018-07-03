@@ -1,36 +1,39 @@
 version: '3'
 services:
   
+  #### Python Web App
+  web:
+    restart: always
+    build: ./web
+    ports:
+      - 9000:3000
+    volumes:
+      - /www/public
+    networks:
+      - webnet
+  
   #### Nginx proxy
   nginx:
     restart: always
     build: ./nginx
     ports:
-      - 8081:80
+      - 80:80
+      - 8443:443
     volumes:
       - /www/public
-    links:
-      - web:web
-  
-  #### Nginx cache
-  proxy:
-    restart: always
-    image: bitnami/nginx:latest 
-    ports:
-      - 8083:8080
-      - 8443:8443
-    volumes:
       - ./public:/app
     links:
       - web:web
+    networks:
+      - webnet
 
   #### NodeJS app
-  web:
+  app:
     build: ./app
     #image: jsapps/nodejs-app:latest
     command: node bin/www
     volumes:
-      - "./app:/src/app"
+      - ./app:/src/app
     ports:
       - 3000
     depends_on: 
@@ -54,7 +57,5 @@ services:
       - webnet
 
   # Database
-
-
 networks:
   webnet:
