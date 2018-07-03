@@ -1,32 +1,35 @@
-version: '3'
+version: '3.5'
 services:
-  
-  #### Python Web App
-  web:
-    restart: always
-    build: ./web
-    ports:
-      - 9000:3000
-    volumes:
-      - /www/public
-    networks:
-      - webnet
-  
   #### Nginx proxy
   nginx:
     restart: always
-    build: ./nginx
+    build: ./nginx-example
     ports:
-      - 80:80
-      - 8443:443
+      - 80:8181
+      #- 8443:443
     volumes:
-      - /www/public
-      - ./public:/app
-    links:
-      - web:web
+      - ./nginx-example/nginx:/etc/nginx
+      - ./nginx-example/www:/usr/share/nginx/html
     networks:
-      - webnet
-
+      - frontend
+  
+  #### Python Web App
+  web:
+    build: ./web
+    ports:
+      - 9000:3000
+    depends_on: 
+      - db
+    links:
+      - db:redis
+    networks:
+      - frontend
+      - backend
+    environment: 
+      - REDIS_HOST=redis
+      - PORT=3000
+      - FLASK_ENV=production
+  
   #### NodeJS app
   app:
     build: ./app
@@ -35,16 +38,18 @@ services:
     volumes:
       - ./app:/src/app
     ports:
-      - 3000
+      - 9001:9000
     depends_on: 
       - db
     links:
       - db:redis
     networks:
-      - webnet
+      - frontend
+      - backend
     environment: 
       - REDIS_HOST=redis
-      - DEBUG=*
+      - DEBUG=connect:*
+      - PORT=9000
   
     
   #### Redis store
@@ -54,8 +59,11 @@ services:
     ports:
       - 6379
     networks:
-      - webnet
+      - backend
 
-  # Database
+# Networks
 networks:
-  webnet:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
