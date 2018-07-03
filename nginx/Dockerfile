@@ -1,9 +1,15 @@
-FROM tutum/nginx
+FROM nginx
+#FROM tutum/nginx
 #FROM bitnami/nginx:latest
 
 
-RUN rm /etc/nginx/sites-enabled/default
-RUN ls -la /etc/nginx/sites-enabled
+#RUN rm /etc/nginx/sites-enabled/default
+RUN ls -la /etc/nginx
 
-#ADD . /etc/nginx
-ADD ./sites-enabled /etc/nginx/sites-enabled
+COPY static-html-directory /usr/share/nginx/html
+
+
+#COPY nginx.conf /etc/nginx/nginx.conf
+COPY . /etc/nginx
+CMD [ "nginx-debug", "-g", "daemon off;"]]
+

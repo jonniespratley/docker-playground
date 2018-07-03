@@ -37,7 +37,11 @@ if (cluster.isMaster && process.env.ENABLE_CLUSTER_MODE) {
 } else {
 
   const app = express();
-  app.set('port', port);
+
+
+  app.set('host', process.env.HOST || 'localhost');
+  app.set('port', process.env.HOST || port);
+  
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(bodyParser.json());
 
@@ -50,19 +54,25 @@ if (cluster.isMaster && process.env.ENABLE_CLUSTER_MODE) {
     })
   })
   log('enabling request proxy');
-    app.all('/api/*', requestProxy({
-      cache: cache,
-      cacheMaxAge: 60,
-      url: `${process.env.PROXY_REQUEST_URL}/api/*`,
-      headers: {
-        'X-Custom-Header': process.env.SOMEAPI_CUSTOM_HEADER || 'Local-to-Remote'
-      }
-    }));
 
-  http
-    .createServer(app)
-    .listen(app.get('port'), function () {
-      console.log("Express server listening on port " + app.get('port'));
+    app.all('/api/proxy/*', (req, res, next) => {
+        console.log('proxy', req.url, req.query);
+        let url = req.query.url;
+        
+        return requestProxy({
+            cache: cache,
+            cacheMaxAge: 60,
+            url: `${url}/api/*`,
+            headers: {
+              'X-Custom-Header': process.env.SOMEAPI_CUSTOM_HEADER || 'Local-to-Remote'
+            }
+          })(req, res, next)
+    });
+
+  let server = http.createServer(app);
+
+    server.listen(app.get('port'), function () {
+      console.log(`Express server listening at http://${app.get('host')}:${app.get('port')}` );
       console.log('Worker ' + process.pid + ' running on', app.get('port'));
     });
 }

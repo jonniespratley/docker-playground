@@ -8,7 +8,7 @@ server {
     server_name example.com www.example.com;
 
     charset utf-8;
-    #include h5bp/basic.conf;
+    include h5bp/basic.conf;
 
     location /public {
       alias /src/app/public;

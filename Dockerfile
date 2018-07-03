@@ -1,6 +1,7 @@
 FROM node:latest
 
-
+ENV PORT        9000
+ENV NODE_ENV    production
 WORKDIR                   /usr/src/app
 
 COPY                      ./      ./
@@ -9,7 +10,8 @@ COPY                      ./      ./
 
 RUN npm -v
 RUN node -v
-RUN npm install --production
-EXPOSE 3000
+RUN yarn --prod
+
+EXPOSE 9000
 
 CMD [ "npm", "start" ]
