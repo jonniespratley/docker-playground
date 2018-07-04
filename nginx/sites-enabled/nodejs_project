@@ -16,12 +16,12 @@ server {
     listen 80;
     
     server_name     nodejs-proxy;
-    index           index.html index.htm;
+    #index           index.html index.htm;
     #root           /etc/nginx/static-html-directory
     
     location /api {
         #limit_req zone=one burst=5;
-        proxy_pass http://localhost:49164;
+        proxy_pass http://localhost:3030;
         #proxy_pass https://apphub-microapp-react-px-polymer-example-cf1prod.run.aws-usw02-pr.ice.predix.io:443/api;
         
         proxy_http_version 1.1;

@@ -1,26 +1,28 @@
 FROM nginx
 
-RUN ls -la /etc/nginx
-RUN ls -la /etc/nginx/conf.d
-#RUN ls -la /etc/nginx/sites-enabled
-RUN rm /etc/nginx/conf.d/default.conf
-#RUN rm /etc/nginx/conf.d/examplessl.conf
-#RUN rm /etc/nginx/sites-enabled/default
 
+ENV SITE_ENABLED proxy-server.example.com
 
-#COPY static-html-directory /usr/share/nginx/html
-
-
-COPY nginx /etc/nginx
-
+COPY ./nginx /etc/nginx
 COPY www /usr/share/nginx/html
 
+RUN ls -la /etc/nginx
+RUN ls -la /etc/nginx/conf.d
+RUN ls -la /etc/nginx/sites-enabled
 
-#COPY conf /etc/nginx/conf.d
+RUN rm /etc/nginx/conf.d/default.conf
 
 
-#VOLUME /usr/share/nginx/html
-#VOLUME /etc/nginx
+
+
+
+RUN cd /etc/nginx/sites-enabled && \
+  ln -s ../sites-available/${SITE_ENABLED} .
+
+
+
+VOLUME /etc/nginx
+VOLUME /usr/share/nginx/html
 
 EXPOSE 80
 

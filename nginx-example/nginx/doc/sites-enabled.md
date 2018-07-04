@@ -12,6 +12,7 @@ To enable a new site, link the config file to sites-enabled, and restart nginx.
 
 For example:
 
+```
 	$ cd /etc/nginx/sites-available
 
 	... create newproject.com ...
@@ -22,6 +23,8 @@ For example:
 	$ /etc/init.d/nginx reload
 	[....] Reloading nginx configuration: nginx.
 	$
+```
+
 
 ## Disabling a site
 
@@ -30,10 +33,11 @@ nginx.
 
 For example:
 
+```
 	$ cd /etc/nginx/sites-enabled
 	$ rm newproject.com
 
 	$ /etc/init.d/nginx reload
 	[....] Reloading nginx configuration: nginx.
 	$
-
+```
