@@ -3,9 +3,7 @@ services:
 
   # NodeJS app
   web:
-    build: ./app
-    volumes:
-      - "./app:/src/app"
+    build: ./web
     ports:
       - "3030:3000"
     links:
@@ -14,18 +12,17 @@ services:
       - webnet
     environment: 
       - REDIS_HOST=redis
-    command: npm start
   
   # nging proxy
-  nginx:
+  proxy:
     restart: always
-    build: ./nginx
+    build: ./nginx-example
     ports:
-      - "8080:80"
-    volumes:
-      - /www/public
+      - "8181:80"
     links:
       - web:web
+    networks:
+      - webnet
 
   # Redis store
   db:
@@ -36,7 +33,24 @@ services:
     networks:
       - webnet
 
-  # Database
+  nginx_proxy:
+    build:
+      dockerfile: ./nginx-example/Dockerfile.proxy
+    # Only test the configuration
+    #command: /bin/sh -c "envsubst < /etc/nginx/nginx.tmpl > /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf"
+    volumes:
+      - ./nginx-example/nginx/nginx.tmpl:/etc/nginx/nginx.tmpl
+    ports:
+      - 80:80
+    environment:
+    - SERVER_NAME=test
+    - LISTEN_PORT=80
+    - UPSTREAM=localhost:3030
+    - UPSTREAM_PROTO=http
+    # Override the resolver
+    - RESOLVER=127.0.0.1
+    # The following would add an escape if it isn't in the Dockerfile
+    - ESC=$$
 
 networks:
   webnet:

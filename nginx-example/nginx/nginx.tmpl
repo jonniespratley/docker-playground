@@ -1,0 +1,24 @@
+events {}
+
+http {
+  error_log stderr;
+  access_log /dev/stdout;
+
+  upstream upstream_servers {
+    server ${UPSTREAM};
+  }
+
+  server {
+    listen ${LISTEN_PORT};
+    server_name ${SERVER_NAME};
+    resolver ${RESOLVER};
+    set ${ESC}upstream ${UPSTREAM};
+
+    # Allow injecting extra configuration into the server block
+    ${SERVER_EXTRA_CONF}
+
+    location / {
+       proxy_pass ${ESC}upstream;
+    }
+  }
+}

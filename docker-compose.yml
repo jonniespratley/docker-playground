@@ -1,23 +1,45 @@
-version: '3'
+version: "3"
 services:
-  #### Nginx cache
-  proxy:
+  #### Nginx proxy
+  nginx:
     restart: always
-    image: bitnami/nginx:latest 
-    #build: ./nginx-proxy
+    build: ./nginx-example
+    ports:
+      - 8181:8181
+      #- 8443:443
     volumes:
-      - ./nginx-proxy/public:/app
-      #- ./my_vhost.conf:/bitnami/nginx/conf/vhosts/my_vhost.conf:ro
-
-  #### NodeJS app
+      - ./nginx-example/nginx:/etc/nginx
+      - ./nginx-example/www:/usr/share/nginx/html
+    networks:
+      - webnet
+  
+  #### Python Web App
   web:
+    build: ./web
+    restart: always
+    ports:
+      - 9000:3000
+    depends_on: 
+      - db
+    links:
+      - db:redis
+    networks:
+      - webnet
+      - backend
+    environment: 
+      - REDIS_HOST=redis
+      #- REDIS_PORT=32770
+      #- PORT=3000
+      - FLASK_ENV=production
+  
+  #### NodeJS app
+  app:
+    restart: always
     build: ./app
     #image: jsapps/nodejs-app:latest
     command: node bin/www
-    volumes:
-      - "./app:/src/app"
     ports:
-      - 3000
+      - 9001:9000
     depends_on: 
       - db
     links:
@@ -26,7 +48,8 @@ services:
       - webnet
     environment: 
       - REDIS_HOST=redis
-      #- DEBUG=*
+      - DEBUG=connect:*
+      - PORT=9000
   
     
   #### Redis store
@@ -34,12 +57,12 @@ services:
     hostname: redis
     image: redis
     ports:
-      - 6379
-    networks:
-      - webnet
+      - "6379:6379"
 
-  # Database
-
-
+# Networks
 networks:
   webnet:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge

@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <title>{% block title %}{% endblock %} - Flask App</title>
+    {% endblock %}
+  </head>
+  <body>
+
+    <!--App Here-->
+    <nav class="navbar navbar-dark bg-dark sticky-top">
+        <a href="/" class="navbar-brand">Flask App</a>
+    </nav>
+
+    <main id="content" class="container mt-4">
+        <div class="row">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </main>
+    
+    <!--footer id="footer">
+      <div class="container">
+        {% block footer %}
+        &copy; Copyright 2018 by <a href="http://domain.invalid/">you</a>.
+        {% endblock %}
+      </div>
+    </footer-->
+
+     
+    <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  
+  </body>
+</html>

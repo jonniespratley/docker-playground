@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development node app",
+    "compose":"docker-compose up",
     "start": "NODE_ENV=production node app"
   },
   "author": "Jonnie Spratley",
