@@ -1,5 +1,6 @@
 
 server {
+    
     # Note that it's listening on port 9000
     listen 9000 default_server;
     root /var/www/;
@@ -13,6 +14,7 @@ server {
     location /public {
       alias /src/app/public;
     }
+    
     location / {
         try_files $uri $uri/ =404;
     }

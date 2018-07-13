@@ -6,7 +6,14 @@ var router = express.Router();
 /* redis */
 var host = process.env.REDIS_HOST || '127.0.0.1';
 var port = process.env.REDIS_PORT || 6379;
-var client = redis.createClient(port, host);
+var client;
+
+try{
+  client = redis.createClient(port, host);
+
+} catch (err){
+  console.error('Redis Error', err);
+}
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

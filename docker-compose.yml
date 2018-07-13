@@ -1,28 +1,13 @@
 version: '3'
 services:
-  
-  #### Nginx proxy
-  nginx:
-    restart: always
-    build: ./nginx
-    ports:
-      - 8081:80
-    volumes:
-      - /www/public
-    links:
-      - web:web
-  
   #### Nginx cache
   proxy:
     restart: always
     image: bitnami/nginx:latest 
-    ports:
-      - 8083:8080
-      - 8443:8443
+    #build: ./nginx-proxy
     volumes:
-      - ./public:/app
-    links:
-      - web:web
+      - ./nginx-proxy/public:/app
+      #- ./my_vhost.conf:/bitnami/nginx/conf/vhosts/my_vhost.conf:ro
 
   #### NodeJS app
   web:
@@ -41,7 +26,7 @@ services:
       - webnet
     environment: 
       - REDIS_HOST=redis
-      - DEBUG=*
+      #- DEBUG=*
   
     
   #### Redis store
