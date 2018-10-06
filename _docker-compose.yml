@@ -35,6 +35,7 @@ services:
 
   nginx_proxy:
     build:
+      context: ./nginx-example
       dockerfile: ./nginx-example/Dockerfile.proxy
     # Only test the configuration
     #command: /bin/sh -c "envsubst < /etc/nginx/nginx.tmpl > /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf"
