@@ -36,4 +36,10 @@ server {
         
         #include proxy_params;
     }
+    
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+  
 }
