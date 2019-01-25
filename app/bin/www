@@ -1,9 +1,25 @@
 #!/usr/bin/env node
-var debug = require('debug')('app');
-var app = require('../app');
+const debug = require('debug')('app');
+const cluster = require('cluster');
+// Code to run if we're in the master process
+if (cluster.isMaster) {
+  // Count the machine's CPUs
+  const cpuCount = require('os').cpus().length;
 
-app.set('port', process.env.PORT || 9000);
+  // Create a worker for each CPU
+  for (var i = 0; i < cpuCount; i += 1) {
+    cluster.fork();
+  }
 
-var server = app.listen(app.get('port'), function() {
-  console.log('Express server listening on port ' + server.address().host + ':' + server.address().port, app.get('port'));
-});
+  // Code to run if we're in a worker process
+} else {
+  var app = require('../app');
+
+  app.set('port', process.env.PORT || 9000);
+
+  var server = app.listen(app.get('port'), function () {
+    console.log('Worker %d -', cluster.worker.id, 
+    'Server listening on 127.0.0.1:', app.get('port'));
+    
+  });
+}

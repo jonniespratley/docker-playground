@@ -1,17 +1,15 @@
 var redis = require('redis');
 
 module.exports = () => {
-    console.log('config.js', process.env);
-    
     var host = process.env.REDIS_HOST || 'localhost';
     var port = process.env.REDIS_PORT || 6379;
     var client;
 
-    if(!client){
+    if (!client) {
         try {
             client = redis.createClient({
-                port:port, 
-                host:host,
+                port: port,
+                host: host,
                 prefix: 'nodejs-app',
                 retry_strategy: function (options) {
                     console.log('retry_strategy', options);
@@ -30,7 +28,7 @@ module.exports = () => {
                         return undefined;
                     }
                     // reconnect after
-                    return Math.min(options.attempt * 100, 3000);
+                    return Math.min(options.attempt * 100, 10000);
                 }
             });
 
