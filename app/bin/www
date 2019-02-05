@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 const debug = require('debug')('app');
 const cluster = require('cluster');
-// Code to run if we're in the master process
-if (cluster.isMaster) {
-  // Count the machine's CPUs
-  const cpuCount = require('os').cpus().length;
 
-  // Create a worker for each CPU
+if (cluster.isMaster) {
+  const cpuCount = require('os').cpus().length;
+  
   for (var i = 0; i < cpuCount; i += 1) {
     cluster.fork();
   }
@@ -20,6 +18,5 @@ if (cluster.isMaster) {
   var server = app.listen(app.get('port'), function () {
     console.log('Worker %d -', cluster.worker.id, 
     'Server listening on 127.0.0.1:', app.get('port'));
-    
   });
 }

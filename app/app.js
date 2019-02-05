@@ -4,7 +4,7 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
- 
+const responseTime = require('response-time')
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 
@@ -12,9 +12,13 @@ const routes = require('./routes/index');
 const users = require('./routes/users');
 const config = require('./config')();
 
-var app = express();
+const app = express();
+
+app.use(responseTime())
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hjs');
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -42,7 +46,7 @@ app.use(session({
     }
 }))
 
-app.use('/', routes);
+app.use('/?', routes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler

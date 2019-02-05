@@ -1,9 +1,6 @@
-var express = require('express');
-var router = express.Router();
-
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
+const express = require('express');
+const router = express.Router();
+router.get('/', (req, res) => {
     const client = req.app.locals.redis;
     if (client) {
         client.incr('counter', function (err, result) {
@@ -21,7 +18,5 @@ router.get('/', function (req, res, next) {
             error: 'Error connecting to redis'
         });
     }
-
 });
-
 module.exports = router;
